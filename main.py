@@ -5,6 +5,8 @@ import os
 import json
 import pandas as pd
 import plotly.express as px
+from io import StringIO
+import datetime
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -17,9 +19,9 @@ def analisar_texto(texto):
     Analise os sentimentos no texto abaixo. Classifique cada trecho como Positivo, Negativo ou Neutro, baseando-se no tom emocional real transmitido (e não apenas em palavras isoladas).
 
     Critérios:
-    - **Positivo**: trechos que expressam otimismo, esperança, superação ou motivação.
-    - **Negativo**: tristeza, frustração, desânimo, pessimismo.
-    - **Neutro**: fatos, conselhos, reflexões sem carga emocional forte.
+    - *Positivo*: trechos que expressam otimismo, esperança, superação ou motivação.
+    - *Negativo*: tristeza, frustração, desânimo, pessimismo.
+    - *Neutro*: fatos, conselhos, reflexões sem carga emocional forte.
 
     Formato da resposta (apenas JSON):
     {{
@@ -30,14 +32,13 @@ def analisar_texto(texto):
 
     Texto: {texto}
     """
-    resposta_bruta = ""  # Inicializa para evitar UnboundLocalError
+    resposta_bruta = ""
     try:
         response = model.generate_content(prompt)
         resposta_bruta = response.text.strip()
 
         if resposta_bruta.startswith("```"):
             resposta_bruta = resposta_bruta.strip("`")
-
             if resposta_bruta.startswith("json"):
                 resposta_bruta = resposta_bruta[4:].strip()
 
@@ -55,7 +56,21 @@ def contar_sentimentos(resultado):
         "Neutro": len(resultado.get("Neutro", []))
     }
 
-def exibir_resultado(resultado):
+def salvar_resultado_csv(resultado, texto_original):
+    data_atual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    linhas = []
+    for sentimento, trechos in resultado.items():
+        for trecho in trechos:
+            linhas.append({
+                "Data/Hora": data_atual,
+                "Sentimento": sentimento,
+                "Trecho": trecho,
+                "Texto Original": texto_original
+            })
+    df = pd.DataFrame(linhas)
+    return df
+
+def exibir_resultado(resultado, texto_original):
     if isinstance(resultado, dict):
         if "Erro" in resultado:
             st.error(resultado["Erro"])
@@ -87,6 +102,7 @@ def exibir_resultado(resultado):
                     "Percentual": (v / total * 100) if total > 0 else 0
                 } for k, v in dados.items()
             ])
+
             fig = px.bar(
                 df,
                 y="Sentimento",
@@ -115,6 +131,18 @@ def exibir_resultado(resultado):
             )
             st.plotly_chart(fig, use_container_width=True)
 
+            df_resultado = salvar_resultado_csv(resultado, texto_original)
+            csv_buffer = StringIO()
+            df_resultado.to_csv(csv_buffer, index=False)
+            csv_bytes = csv_buffer.getvalue().encode("utf-8")
+
+            st.download_button(  # Botão para baixar o resultado da análise como arquivo CSV
+                label="💾 Baixar Resultado em CSV",
+                data=csv_bytes,
+                file_name="analise_sentimentos.csv",
+                mime="text/csv"
+            )
+
 st.title("💭 Análise de Sentimento de textos com IA")
 
 texto_usuario = st.text_area("Digite o texto a ser analisado:")
@@ -128,7 +156,7 @@ if st.button("Analisar Sentimento"):
         st.warning("Por favor, insira algum texto.")
     else:
         resultado = analisar_texto(texto_usuario)
-        exibir_resultado(resultado)
+        exibir_resultado(resultado, texto_usuario)
 
 if uploaded_file is not None:
     conteudo = uploaded_file.read().decode("utf-8")
@@ -136,4 +164,4 @@ if uploaded_file is not None:
 
     if st.button("Analisar Sentimento do Arquivo"):
         resultado = analisar_texto(conteudo)
-        exibir_resultado(resultado)
+        exibir_resultado(resultado, conteudo)
