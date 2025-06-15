@@ -12,6 +12,8 @@ VocÃª pode digitar um texto ou fazer upload de um arquivo `.txt`, e o modelo irÃ
 - [Streamlit](https://streamlit.io/)
 - [Google Generative AI (Gemini)](https://ai.google.dev/)
 - [python-dotenv](https://pypi.org/project/python-dotenv/)
+- [pandas](https://pandas.pydata.org/)
+- [plotly](https://plotly.com/python/)
 
 ---
 
