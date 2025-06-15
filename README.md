@@ -1,8 +1,11 @@
 # 💭 Análise de Sentimento com IA
 
-Este projeto é uma aplicação web simples de **análise de sentimento** de textos usando **IA generativa (Gemini)**, desenvolvida com **Streamlit**.
+Esta aplicação web realiza **análise de sentimentos** em textos com o uso de **IA generativa (Gemini)**, construída com **Streamlit**.
 
-Você pode digitar um texto ou fazer upload de um arquivo `.txt`, e o modelo irá identificar se o sentimento é **Positivo**, **Negativo** ou **Neutro**.
+O usuário pode inserir manualmente um texto ou fazer upload de um arquivo `.txt`. A inteligência artificial analisará o conteúdo e classificará os trechos como **Positivo**, **Negativo** ou **Neutro**, com base no tom emocional transmitido.
+
+Além disso, os resultados são apresentados de forma visual por meio de **gráficos interativos** e podem ser exportados em formato **CSV**.
+
 
 ---
 
