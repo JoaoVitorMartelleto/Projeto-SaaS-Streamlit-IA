@@ -44,3 +44,9 @@ python -m venv venv
 
 ## 5. Execute a aplicação:
 - streamlit run main.py
+
+## 🚀 Desenvolvido por:
+- Bernardo Sousa de Aquino
+- João Victor Martelleto de Paula Teixeira
+- João Victor Nascimento Lins Pimenta
+- João Victor Queiroz de Araújo 
