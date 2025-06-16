@@ -46,7 +46,7 @@ python -m venv venv
 - streamlit run main.py
 
 ## 🚀 Desenvolvido por:
-- Bernardo Sousa de Aquino
+- Bernardo Souza de Aquino
 - João Victor Martelleto de Paula Teixeira
 - João Victor Nascimento Lins Pimenta
 - João Victor Queiroz de Araújo 
